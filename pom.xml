@@ -5,12 +5,36 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ste.vnc</groupId>
-    <artifactId>mini-frb</artifactId>
-    <version>0.0.0-SNAPSHOT</version>
+    <artifactId>mini-rfb</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Mini RFB</name>
     <description>Client-side implementation of minimal RFB/VNC protocol (RFC 6143)</description>
+    <url>https://github.com/stefanofornari/mini-rfb</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>stefanofornari</id>
+            <name>Stefano Fornari</name>
+            <email>stefano.fornari@gmail.com</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/stefanofornari/mini-rfb.git</connection>
+        <developerConnection>scm:git:git@github.com:stefanofornari/mini-rfb.git</developerConnection>
+        <url>https://github.com/stefanofornari/mini-rfb</url>
+        <tag>HEAD</tag>
+    </scm>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -20,6 +44,13 @@
         <junit.version>5.10.2</junit.version>
         <assertj.version>3.25.3</assertj.version>
         <javafx.version>21.0.2</javafx.version>
+        <maven.surefire.version>3.2.5</maven.surefire.version>
+        <maven.shade.version>3.5.1</maven.shade.version>
+        <maven.source.version>3.3.1</maven.source.version>
+        <maven.javadoc.version>3.6.3</maven.javadoc.version>
+        <maven.gpg.version>3.2.1</maven.gpg.version>
+        <nexus.staging.version>1.6.13</nexus.staging.version>
+        <maven.release.version>3.0.1</maven.release.version>
     </properties>
 
     <dependencies>
@@ -68,7 +99,71 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.5</version>
+                <version>${maven.surefire.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven.source.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven.javadoc.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>${maven.gpg.version}</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${maven.release.version}</version>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <releaseProfiles>release</releaseProfiles>
+                    <goals>deploy</goals>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>${nexus.staging.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
             </plugin>
             <!--
                 Builds target/vnc-protocol-<version>-all.jar: an executable
@@ -82,12 +177,12 @@
                 instead (see the javafx-maven-plugin below) - this fat jar's
                 entry point stays the console-only ASCII demo, which has no
                 platform-specific dependencies.
-                Run with: java -jar target/vnc-protocol-0.1.0-SNAPSHOT-all.jar <host> [port] [columns] [engine]
+                Run with: java -jar target/mini-rfb-0.1.0-all.jar <host> [port] [columns] [engine]
             -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.1</version>
+                <version>${maven.shade.version}</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -125,4 +220,15 @@
             </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 </project>
