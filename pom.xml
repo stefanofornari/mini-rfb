@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ste.vnc</groupId>
+    <artifactId>mini-frb</artifactId>
+    <version>0.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>Mini RFB</name>
+    <description>Client-side implementation of minimal RFB/VNC protocol (RFC 6143)</description>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <junit.version>5.10.2</junit.version>
+        <assertj.version>3.25.3</assertj.version>
+        <javafx.version>21.0.2</javafx.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- io.github.seujorgenochurras:image-to-ascii is on Maven Central proper
+             (not JitPack), so this is a normal, reproducible dependency. -->
+        <dependency>
+            <groupId>io.github.seujorgenochurras</groupId>
+            <artifactId>image-to-ascii</artifactId>
+            <version>0.0.5</version>
+        </dependency>
+        <!--
+            JavaFX artifacts are platform-specific from JavaFX 11 onwards.
+            No explicit classifier here - the os-maven-plugin extension below
+            plus javafx-maven-plugin handle platform resolution themselves;
+            pinning ${os.detected.classifier} directly on this dependency
+            conflicted with that rather than helping.
+        -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <extensions>
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+                <version>1.7.1</version>
+            </extension>
+        </extensions>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+            </plugin>
+            <!--
+                Builds target/vnc-protocol-<version>-all.jar: an executable
+                fat jar bundling this project's classes plus all runtime
+                dependencies (image-to-ascii and whatever it pulls in
+                transitively — junit/assertj are test-scoped and excluded
+                automatically). JavaFX is deliberately excluded here too: its
+                jars are platform-specific (see the classifier note above), so
+                bundling one would tie this fat jar to whichever OS built it.
+                The JavaFX demo is meant to be run via `mvn javafx:run`
+                instead (see the javafx-maven-plugin below) - this fat jar's
+                entry point stays the console-only ASCII demo, which has no
+                platform-specific dependencies.
+                Run with: java -jar target/vnc-protocol-0.1.0-SNAPSHOT-all.jar <host> [port] [columns] [engine]
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>all</shadedClassifierName>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>org.openjfx:*</exclude>
+                                </excludes>
+                            </artifactSet>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>ste.vnc.demo.AsciiVNCDemo</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--
+                Enables `mvn javafx:run` to launch VNCViewerDemoApp directly,
+                with the correct JavaFX module-path wiring handled for you.
+            -->
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <configuration>
+                    <mainClass>ste.vnc.demo.javafx.VNCViewerDemoApp</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
