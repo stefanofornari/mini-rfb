@@ -4,7 +4,7 @@
 
     <groupId>ste.vnc</groupId>
     <artifactId>mini-rfb</artifactId>
-    <version>0.0.0</version>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Mini RFB</name>
@@ -31,7 +31,7 @@
         <connection>scm:git:git://github.com/stefanofornari/mini-rfb.git</connection>
         <developerConnection>scm:git:git@github.com:stefanofornari/mini-rfb.git</developerConnection>
         <url>https://github.com/stefanofornari/mini-rfb</url>
-        <tag>mini-rfb-0.0.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <properties>
