@@ -32,13 +32,13 @@ public enum EncodingType {
     ZRLE(16),
     TIGHTZ(17);
 
-    private final int code;
+    public final int code;
 
     EncodingType(final int code) {
         this.code = code;
     }
 
-    public int getCode() {
+    public int code() {
         return code;
     }
 

@@ -240,13 +240,13 @@ public final class RFBStream {
 
             final Rectangle rect = new Rectangle(x, y, width, height);
 
-            if (encodingType == EncodingType.RAW.getCode()) {
+            if (encodingType == EncodingType.RAW.code()) {
                 final int[] pixels = new RawDecoder().decode(format, width, height, in);
                 rectangles.add(new FramebufferUpdateRectangle(rect, pixels, FramebufferUpdateRectangle.ENCODING_RAW, 0, 0));
-            } else if (encodingType == EncodingType.HEXTILE.getCode()) {
+            } else if (encodingType == EncodingType.HEXTILE.code()) {
                 final int[] pixels = new HextileDecoder().decode(format, width, height, in);
                 rectangles.add(new FramebufferUpdateRectangle(rect, pixels, FramebufferUpdateRectangle.ENCODING_HEXTILE, 0, 0));
-            } else if (encodingType == EncodingType.COPYRECT.getCode()) {
+            } else if (encodingType == EncodingType.COPYRECT.code()) {
                 final int srcX = IoUtil.readUnsignedShortBigEndian(in);
                 final int srcY = IoUtil.readUnsignedShortBigEndian(in);
                 rectangles.add(new FramebufferUpdateRectangle(rect, null, FramebufferUpdateRectangle.ENCODING_COPYRECT, srcX, srcY));
@@ -300,7 +300,7 @@ public final class RFBStream {
         };
         out.write(header);
         for (final EncodingType encoding : encodings) {
-            final int code = encoding.getCode();
+            final int code = encoding.code();
             out.write(new byte[] {
                 (byte) ((code >> 24) & 0xFF),
                 (byte) ((code >> 16) & 0xFF),
