@@ -4,7 +4,7 @@
 
     <groupId>ste.vnc</groupId>
     <artifactId>mini-rfb</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Mini RFB</name>
@@ -164,7 +164,7 @@
                 </configuration>
             </plugin>
             <!--
-                Builds target/vnc-protocol-<version>-all.jar: an executable
+                Builds target/mini-rfb-<version>-all.jar: an executable
                 fat jar bundling this project's classes plus all runtime
                 dependencies (image-to-ascii and whatever it pulls in
                 transitively — junit/assertj are test-scoped and excluded
@@ -190,6 +190,7 @@
                         <configuration>
                             <shadedArtifactAttached>true</shadedArtifactAttached>
                             <shadedClassifierName>all</shadedClassifierName>
+                            <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
                             <artifactSet>
                                 <excludes>
                                     <exclude>org.openjfx:*</exclude>
@@ -221,12 +222,12 @@
 
     <distributionManagement>
         <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <id>central.sonatype.com</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
         <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>central.sonatype.com</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
 </project>
